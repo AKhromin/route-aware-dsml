@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated variant3 -->
+      <package
+            uri="http://uk.ac.kcl.variant3"
+            class="variant3.Variant3Package"
+            genModel="model/variant3.genmodel"/>
+   </extension>
+
+</plugin>

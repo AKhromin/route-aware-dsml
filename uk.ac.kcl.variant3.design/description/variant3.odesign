@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<description:Group xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:tool="http://www.eclipse.org/sirius/diagram/description/tool/1.1.0" xmlns:tool_1="http://www.eclipse.org/sirius/description/tool/1.1.0" xmlns:validation="http://www.eclipse.org/sirius/description/validation/1.1.0" name="variant3" version="12.0.0.2017041100">
+  <ownedViewpoints name="Variant3Viewpoint" label="Flight Design">
+    <ownedRepresentations xsi:type="description_1:DiagramDescription" name="FlightMap" label="Global Flight Map" domainClass="variant3.FlightModel" enablePopupBars="true">
+      <validationSet>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.distanceCheck" label="Positive Distance Check" level="ERROR" message="The distance of a flight segment must be greater than 0." targetClass="variant3.FlightSegment">
+          <audits auditExpression="aql:self.distance > 0.0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.erosionCheck" label="Normalized erosionIndex value" level="ERROR" message="Erosion index must be a normalized value between 0.0 and 1.0." targetClass="variant3.Environment">
+          <audits auditExpression="aql:self.erosionIndex >= 0.0 and self.erosionIndex &lt;= 1.0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.salinityCheck" label="Normalized salinityLevel value" level="ERROR" message="Salinity level must be a normalized value between 0.0 and 1.0 (converted from ppm)." targetClass="variant3.Environment">
+          <audits auditExpression="aql:self.salinityLevel >= 0.0 and self.salinityLevel &lt;= 1.0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.ambientCheck" level="ERROR" message="Ambient temperature must be within a realistic operating range (-60°C to 60°C)." targetClass="variant3.Environment">
+          <audits auditExpression="aql:self.ambientTemp >= -60.0 and self.ambientTemp &lt;= 60.0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.wearCheck" level="ERROR" message="Component wear values cannot be negative." targetClass="variant3.FlightSegment">
+          <audits auditExpression="aql:self.wearEngine >= 0 and self.wearFuselage >= 0 and self.wearLandingGear >= 0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="uk.ac.kcl.variant3.extremeAmbientTemp" message="Extreme high temperature detected (> 45°C). Simulation results may indicate accelerated engine wear." targetClass="variant3.Environment">
+          <audits auditExpression="aql:self.ambientTemp &lt; 45.0"/>
+        </ownedRules>
+        <ownedRules xsi:type="validation:SemanticValidationRule" name="smallDistanceLargeWear" message="A flight segment with near-zero distance should not have accumulated wear data." targetClass="variant3.FlightSegment">
+          <audits auditExpression="aql:self.distance > 0.1 or (self.wearEngine = 0 and self.wearFuselage = 0)"/>
+        </ownedRules>
+      </validationSet>
+      <defaultLayer name="Default">
+        <nodeMappings name="AirportNode" semanticCandidatesExpression="feature:airports" domainClass="variant3.Airport">
+          <style xsi:type="style:SquareDescription" labelSize="12" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_gray']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="WaypointNode" semanticCandidatesExpression="feature:waypoints" domainClass="variant3.Waypoint">
+          <style xsi:type="style:DotDescription" labelSize="12" labelExpression="aql:self.name" labelPosition="node" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
+          </style>
+        </nodeMappings>
+        <edgeMappings name="SegmentEdge" semanticCandidatesExpression="aql:self.routes.segments" sourceMapping="//@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='AirportNode'] //@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='WaypointNode']" targetMapping="//@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='AirportNode'] //@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='WaypointNode']" targetFinderExpression="feature:target" sourceFinderExpression="feature:source" domainClass="variant3.FlightSegment" useDomainElement="true">
+          <style sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.distance.toString() + ' km ' + (if self.environment &lt;> null and self.environment.erosionIndex > 0.5 then '💨' else '' endif) + (if self.environment &lt;> null and self.environment.salinityLevel > 0.5 then '🌊' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp > 35.0 then '☀️' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0 then '❄️' else '' endif) + ' | Wear: ' + self.wearTotal.round().toString()">
+              <labelFormat>bold</labelFormat>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='orange']"/>
+            </centerLabelStyleDescription>
+          </style>
+          <conditionnalStyles predicateExpression="aql:self.environment &lt;> null and self.environment.erosionIndex > 0.5">
+            <style sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='red']"/>
+              <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.distance.toString() + ' km ' + (if self.environment &lt;> null and self.environment.erosionIndex > 0.5 then '💨' else '' endif) + (if self.environment &lt;> null and self.environment.salinityLevel > 0.5 then '🌊' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp > 35.0 then '☀️' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0 then '❄️' else '' endif) + ' | Wear: ' + self.wearTotal.round().toString()">
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:self.environment &lt;> null and self.environment.salinityLevel > 0.5">
+            <style sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
+              <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.distance.toString() + ' km ' + (if self.environment &lt;> null and self.environment.erosionIndex > 0.5 then '💨' else '' endif) + (if self.environment &lt;> null and self.environment.salinityLevel > 0.5 then '🌊' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp > 35.0 then '☀️' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0 then '❄️' else '' endif) + ' | Wear: ' + self.wearTotal.round().toString()">
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:self.environment &lt;> null and self.environment.ambientTemp > 35.0">
+            <style sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='orange']"/>
+              <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.distance.toString() + ' km ' + (if self.environment &lt;> null and self.environment.erosionIndex > 0.5 then '💨' else '' endif) + (if self.environment &lt;> null and self.environment.salinityLevel > 0.5 then '🌊' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp > 35.0 then '☀️' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0 then '❄️' else '' endif) + ' | Wear: ' + self.wearTotal.round().toString()">
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+          <conditionnalStyles predicateExpression="aql:self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0">
+            <style sizeComputationExpression="2">
+              <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
+              <centerLabelStyleDescription labelSize="12" labelExpression="aql:self.distance.toString() + ' km ' + (if self.environment &lt;> null and self.environment.erosionIndex > 0.5 then '💨' else '' endif) + (if self.environment &lt;> null and self.environment.salinityLevel > 0.5 then '🌊' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp > 35.0 then '☀️' else '' endif) + (if self.environment &lt;> null and self.environment.ambientTemp &lt; 0.0 then '❄️' else '' endif) + ' | Wear: ' + self.wearTotal.round().toString()">
+                <labelFormat>bold</labelFormat>
+                <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              </centerLabelStyleDescription>
+            </style>
+          </conditionnalStyles>
+        </edgeMappings>
+        <toolSections name="Objects">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateAirport" label="Airport" nodeMappings="//@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='AirportNode']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="variant3.Airport" referenceName="airports"/>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="CreateFlightSegment" label="FlightSegment" edgeMappings="//@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@edgeMappings[name='SegmentEdge']">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="aql:source.eContainer().routes->first()">
+                <subModelOperations xsi:type="tool_1:CreateInstance" typeName="variant3.FlightSegment" referenceName="segments">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="source" valueExpression="aql:source"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="target" valueExpression="aql:target"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="environment" valueExpression="aql:self.eContainer().library->first()"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool_1:OperationAction" name="RunSimulation" label="Run Simulation">
+            <view name="views"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                <subModelOperations xsi:type="tool_1:For" expression="aql:self.routes.segments" iteratorName="segment">
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="wearEngine" valueExpression="aql:if segment.environment &lt;> null then segment.distance * (1.0 + (segment.environment.erosionIndex * 2.0) + (segment.environment.ambientTemp.abs() / 30.0)) else segment.distance * 1.0 endif"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="wearFuselage" valueExpression="aql:if segment.environment &lt;> null then segment.distance * (1.0 + segment.environment.salinityLevel) else segment.distance * 1.0 endif"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="wearLandingGear" valueExpression="aql:(if segment.source.oclIsTypeOf(variant3::Airport) and segment.source.environment &lt;> null then segment.source.environment.salinityLevel * 200.0 else 0.0 endif) + (if segment.target.oclIsTypeOf(variant3::Airport) and segment.target.environment &lt;> null then segment.target.environment.salinityLevel * 200.0 else 0.0 endif)"/>
+                  <subModelOperations xsi:type="tool_1:SetValue" featureName="wearTotal" valueExpression="aql:segment.wearEngine + segment.wearFuselage + segment.wearLandingGear"/>
+                </subModelOperations>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="CreateWaypoint" label="Waypoint" nodeMappings="//@ownedViewpoints[name='Variant3Viewpoint']/@ownedRepresentations[name='FlightMap']/@defaultLayer/@nodeMappings[name='WaypointNode']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="variant3.Waypoint" referenceName="waypoints"/>
+            </initialOperation>
+          </ownedTools>
+        </toolSections>
+      </defaultLayer>
+    </ownedRepresentations>
+    <ownedJavaExtensions qualifiedClassName="uk.ac.kcl.variant3.design.Services"/>
+  </ownedViewpoints>
+</description:Group>

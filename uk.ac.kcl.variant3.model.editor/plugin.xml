@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated variant3 -->
+      <category
+            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="variant3.presentation.Variant3ModelWizardID"
+            name="%_UI_Variant3ModelWizard_label"
+            class="variant3.presentation.Variant3ModelWizard"
+            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            icon="icons/full/obj16/Variant3ModelFile.gif">
+         <description>%_UI_Variant3ModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated variant3 -->
+      <editor
+            id="variant3.presentation.Variant3EditorID"
+            name="%_UI_Variant3Editor_label"
+            icon="icons/full/obj16/Variant3ModelFile.gif"
+            extensions="variant3"
+            class="variant3.presentation.Variant3Editor"
+            contributorClass="variant3.presentation.Variant3ActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>
