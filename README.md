@@ -21,7 +21,7 @@ Developed as a final-year Individual Project at King's College London
 ## Setup
 
 1. Clone this repository.
-2. In Eclipse, choose `File → Import → General → Existing Projects into Workspace`,
+2. In Eclipse, choose `File -> Import -> General -> Existing Projects into Workspace`,
    select the root of the cloned repository as the search folder, and import all six projects.
 3. Install Sirius and Acceleo via the Eclipse Marketplace if not already installed.
 4. Allow Eclipse to build the workspace. Any initial unresolved imports should
